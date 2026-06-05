@@ -4,12 +4,16 @@ A minimal, terminal-inspired typing test (monkeytype-style). No frameworks, no b
 
 ## Features
 
-- Random common English words to type
+- ~350 common English words, randomly streamed
 - Character-by-character highlighting: correct, incorrect, and pending
-- Animated amber cursor that follows your position
-- Timer modes: 15s, 30s, 60s, 120s
+- Animated cursor that follows your position
+- Two modes:
+  - **Time** — 15s, 30s, 60s, 120s
+  - **Words** — 10, 25, 50, 100 words
 - Live WPM and accuracy while typing
-- Results screen showing WPM, accuracy, correct words, and errors
+- Results screen with WPM, accuracy, correct words, errors, time, and your best WPM (with a "new best" badge)
+- Best scores saved per mode in `localStorage`
+- In-app theme switcher with 10 palettes (amber, dracula, nord, gruvbox, catppuccin, tokyo night, solarized, rosé pine, everforest, latte) — your choice is remembered
 - Restart with `Esc`, `Tab`, or the button
 
 ## Run it
@@ -30,7 +34,7 @@ Then visit `http://localhost:8000`.
 
 ## Theming
 
-Edit the variables in `:root` of `style.css` to reskin — e.g. change `--accent` for the highlight color or `--font-mono` for a different typeface.
+Pick a palette live via the **theme** button (bottom-right). To add your own, drop an entry into the `PALETTES` object in `script.js` (six colors: `bg`, `fg`, `dim`, `error`, `accent`, `muted`) and add its key to `THEME_ORDER` — the `--accent-soft` / `--error-bg` tints are derived automatically via `color-mix()`. The `:root` block in `style.css` holds the default theme and all fonts/spacing.
 
 ---
 
