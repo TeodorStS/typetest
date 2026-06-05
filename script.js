@@ -63,10 +63,29 @@ const PALETTES = {
   'rose-pine':  { label: 'rosé pine',  bg: '#191724', fg: '#e0def4', dim: '#403d52', error: '#eb6f92', accent: '#ebbcba', muted: '#6e6a86' },
   everforest:   { label: 'everforest', bg: '#2d353b', fg: '#d3c6aa', dim: '#4f5b58', error: '#e67e80', accent: '#a7c080', muted: '#859289' },
   latte:        { label: 'latte',      bg: '#eff1f5', fg: '#4c4f69', dim: '#bcc0cc', error: '#d20f39', accent: '#df8e1d', muted: '#8c8fa1' },
+
+  /* ---- Added palettes ---- */
+  mint:         { label: 'mint',        bg: '#0f1a17', fg: '#d6e7e0', dim: '#3a4f49', error: '#ff6b6b', accent: '#54e0b0', muted: '#6a8079' },
+  'choc-mint':  { label: 'choc mint',   bg: '#2a201c', fg: '#e9ded6', dim: '#5a4a40', error: '#e8716a', accent: '#7fe3c0', muted: '#9a847a' },
+  claude:       { label: 'claude',      bg: '#141413', fg: '#faf9f5', dim: '#54524c', error: '#cc5b49', accent: '#d97757', muted: '#b0aea5' },
+  watermelon:   { label: 'watermelon',  bg: '#16271b', fg: '#f6eef0', dim: '#3c5a44', error: '#c1352f', accent: '#ff4d6d', muted: '#5fa46b' },
+  carbon:       { label: 'carbon',      bg: '#313131', fg: '#f2e2c9', dim: '#5e5e5e', error: '#da3333', accent: '#f66e0d', muted: '#868686' },
+  matrix:       { label: 'matrix',      bg: '#0d0208', fg: '#00ff41', dim: '#045a1e', error: '#ff3131', accent: '#00ff41', muted: '#138a35' },
+  olivia:       { label: 'olivia',      bg: '#1d1b1a', fg: '#f0e9e9', dim: '#4a4544', error: '#d96b6b', accent: '#e9bdb1', muted: '#6d6868' },
+  iceberg:      { label: 'iceberg',     bg: '#161821', fg: '#c6c8d1', dim: '#3a3f52', error: '#e27878', accent: '#84a0c6', muted: '#6b7089' },
+  nautilus:     { label: 'nautilus',    bg: '#0f1c2e', fg: '#cfe3f2', dim: '#2b4257', error: '#ff6b6b', accent: '#2bb8e6', muted: '#5b7a93' },
+  botanical:    { label: 'botanical',   bg: '#e7ecd8', fg: '#43503b', dim: '#aeb89c', error: '#b5483d', accent: '#5d8a6f', muted: '#8a9579' },
+  lavender:     { label: 'lavender',    bg: '#efeaff', fg: '#443a63', dim: '#c3bbe0', error: '#d4567f', accent: '#8a6fe8', muted: '#948cb5' },
+  synthwave:    { label: 'synthwave',   bg: '#1a1033', fg: '#f5e6ff', dim: '#463a6b', error: '#ff5c8a', accent: '#ff2e97', muted: '#7a6ba8' },
+  coral:        { label: 'coral',       bg: '#2b1e2e', fg: '#ffe8df', dim: '#5a4150', error: '#ff5a5a', accent: '#ff7e5f', muted: '#9a7488' },
+  coffee:       { label: 'coffee',      bg: '#211710', fg: '#ece0d1', dim: '#4f3d2e', error: '#e07a5f', accent: '#c8956c', muted: '#8a7058' },
 };
 const THEME_ORDER = [
   'amber', 'dracula', 'nord', 'gruvbox', 'catppuccin',
   'tokyo-night', 'solarized', 'rose-pine', 'everforest', 'latte',
+  'mint', 'choc-mint', 'claude', 'watermelon', 'carbon',
+  'matrix', 'olivia', 'iceberg', 'nautilus', 'botanical',
+  'lavender', 'synthwave', 'coral', 'coffee',
 ];
 
 /* localStorage keys */
