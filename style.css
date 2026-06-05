@@ -134,17 +134,24 @@ body {
   position: relative;
 }
 
+/* Fixed-height clipping viewport — shows ~3 lines, hides the rest */
 .words {
   position: relative;
   font-size: var(--font-size-type);
   line-height: var(--line-height-type);
   color: var(--dim);
   letter-spacing: 0.5px;
-  /* Show ~3 lines, hide the rest as the user scrolls down */
-  max-height: calc(var(--font-size-type) * var(--line-height-type) * 3);
+  height: calc(var(--font-size-type) * var(--line-height-type) * 3);
   overflow: hidden;
   user-select: none;
   outline: none;
+}
+
+/* The scrolling strip — JS translates this upward by whole lines */
+.words-inner {
+  position: relative;
+  transition: transform 0.2s ease;
+  will-change: transform;
 }
 
 /* Each word is an inline-block so it wraps cleanly and never breaks mid-word */

@@ -46,6 +46,15 @@ const els = {
 const cursor = document.createElement('div');
 cursor.className = 'cursor';
 
+/*
+ * Inner wrapper that actually holds the word spans + cursor.
+ * `.words` is a fixed-height clipping viewport; `inner` is the strip we
+ * translate upward to scroll through lines. Keeping the transform on the
+ * inner strip (not the viewport) is what makes scrolling behave.
+ */
+const inner = document.createElement('div');
+inner.className = 'words-inner';
+
 /* =========================================================================
    State
    ========================================================================= */
@@ -80,7 +89,7 @@ function generateWords(count = 60) {
 
 /** Render the word list into the DOM as nested spans. */
 function renderWords() {
-  els.words.innerHTML = '';
+  inner.innerHTML = '';
   state.words.forEach((word, w) => {
     const wordEl = document.createElement('span');
     wordEl.className = 'word';
@@ -93,11 +102,17 @@ function renderWords() {
       wordEl.appendChild(charEl);
     });
 
-    els.words.appendChild(wordEl);
+    inner.appendChild(wordEl);
   });
 
-  // Re-attach the cursor (innerHTML wiped it)
-  els.words.appendChild(cursor);
+  // Cursor lives inside the scrolling strip, after the words
+  inner.appendChild(cursor);
+
+  // Mount the strip into the viewport (idempotent)
+  if (inner.parentElement !== els.words) {
+    els.words.innerHTML = '';
+    els.words.appendChild(inner);
+  }
   moveCursor();
 }
 
@@ -107,57 +122,56 @@ function renderWords() {
 
 /** Get the char span at a given word/char position (null if past the word end). */
 function charElAt(wordIndex, charIndex) {
-  const wordEl = els.words.children[wordIndex];
+  const wordEl = inner.children[wordIndex];
   if (!wordEl) return null;
-  // Only count .char spans (skip the cursor, which is a child of .words not .word)
   return wordEl.children[charIndex] || null;
 }
 
 /**
  * Move the animated cursor to the current typing position.
- * Positions it at the left edge of the next char, or the right edge of the
- * last char when the user is at/past the end of a word.
+ * Uses offsetLeft/offsetTop (relative to `inner`, the cursor's positioned
+ * parent). These are immune to the scroll transform, unlike getBoundingClientRect.
  */
 function moveCursor() {
-  const wordEl = els.words.children[state.wordIndex];
+  const wordEl = inner.children[state.wordIndex];
   if (!wordEl) return;
 
-  const containerRect = els.words.getBoundingClientRect();
   const charEl = charElAt(state.wordIndex, state.charIndex);
 
   let left, top;
   if (charEl) {
-    const r = charEl.getBoundingClientRect();
-    left = r.left - containerRect.left;
-    top = r.top - containerRect.top;
+    // Left edge of the next character to type
+    left = charEl.offsetLeft;
+    top = charEl.offsetTop;
   } else {
     // Past the last char of the word — sit just after it
     const lastChar = wordEl.children[wordEl.children.length - 1];
-    const r = (lastChar || wordEl).getBoundingClientRect();
-    left = r.right - containerRect.left;
-    top = r.top - containerRect.top;
+    if (lastChar) {
+      left = lastChar.offsetLeft + lastChar.offsetWidth;
+      top = lastChar.offsetTop;
+    } else {
+      left = wordEl.offsetLeft;
+      top = wordEl.offsetTop;
+    }
   }
 
   cursor.style.left = `${left}px`;
   cursor.style.top = `${top}px`;
 
-  keepCursorInView(wordEl);
+  keepCursorInView();
 }
 
 /**
- * Scroll the words container so the active line stays visible.
- * We translate the whole word block upward by whole-line increments.
+ * Scroll the strip so the active line stays visible.
+ * Recomputed from scratch each move (idempotent — no accumulating offset):
+ * keep the active line as the second of the three visible lines.
  */
-let lineOffset = 0;
-function keepCursorInView(wordEl) {
+function keepCursorInView() {
+  const wordEl = inner.children[state.wordIndex];
+  if (!wordEl) return;
   const lineHeight = parseFloat(getComputedStyle(els.words).lineHeight);
-  const wordTop = wordEl.offsetTop;
-
-  // If the active word sits below the first visible line, shift up a line.
-  if (wordTop - lineOffset > lineHeight * 1.5) {
-    lineOffset = wordTop - lineHeight; // keep active word on the middle line
-    els.words.style.transform = `translateY(-${lineOffset}px)`;
-  }
+  const offset = Math.max(0, wordEl.offsetTop - lineHeight);
+  inner.style.transform = `translateY(-${offset}px)`;
 }
 
 /* =========================================================================
@@ -337,7 +351,7 @@ function appendWords(newWords) {
       charEl.textContent = char;
       wordEl.appendChild(charEl);
     });
-    els.words.insertBefore(wordEl, cursor);
+    inner.insertBefore(wordEl, cursor);
   });
 }
 
@@ -417,8 +431,7 @@ function restart() {
   state.words.forEach(() => state.typed.push([]));
 
   // Reset UI
-  lineOffset = 0;
-  els.words.style.transform = 'translateY(0)';
+  inner.style.transform = 'translateY(0)';
   els.test.style.display = '';
   els.results.classList.remove('visible');
   els.results.setAttribute('aria-hidden', 'true');
