@@ -4,15 +4,18 @@
    ========================================================================= */
 
 :root {
-  /* ---- Colors ---- */
-  --bg:            #0e0e0f;   /* page background */
+  /* ---- Colors (the six below are swapped live by the theme switcher) ---- */
+  --bg:           #0e0e0f;   /* page background */
   --fg:           #d4d4d6;   /* default text (typed-correct) */
   --dim:          #555558;   /* pending / untyped characters */
   --error:        #e0533d;   /* incorrect characters */
-  --error-bg:     rgba(224, 83, 61, 0.12);
   --accent:       #e2b341;   /* golden/amber: cursor, timer, highlights */
-  --accent-soft:  rgba(226, 179, 65, 0.15);
   --muted:        #6b6b70;   /* labels, hints */
+
+  /* ---- Derived tints (auto-recompute when --accent / --error change) ---- */
+  --accent-soft:  color-mix(in srgb, var(--accent) 15%, transparent);
+  --error-bg:     color-mix(in srgb, var(--error) 13%, transparent);
+  --panel:        color-mix(in srgb, var(--fg) 7%, var(--bg));
 
   /* ---- Typography ---- */
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
@@ -22,6 +25,7 @@
   /* ---- Motion ---- */
   --cursor-blink: 1s;
   --fade-in: 0.5s;
+  --theme-fade: 0.35s;
 }
 
 /* ---- Reset-ish ---- */
@@ -47,6 +51,8 @@ body {
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
+  /* Smooth cross-fade when the theme changes */
+  transition: background-color var(--theme-fade) ease, color var(--theme-fade) ease;
 }
 
 /* ---- App shell ---- */
@@ -72,7 +78,24 @@ body {
 
 .modes {
   display: flex;
+  align-items: center;
   gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mode-group {
+  display: flex;
+  gap: 0.3rem;
+}
+
+/* Thin separator between the type toggle and the amount buttons */
+.mode-divider {
+  width: 1px;
+  align-self: stretch;
+  min-height: 1.1rem;
+  background: var(--muted);
+  opacity: 0.3;
+  margin: 0 0.3rem;
 }
 
 .mode {
@@ -193,8 +216,8 @@ body {
   border-radius: 2px;
   top: 0;
   left: 0;
-  /* Smoothly glide between characters */
-  transition: left 0.08s ease, top 0.08s ease;
+  /* Smoothly glide between characters (and fade color on theme change) */
+  transition: left 0.08s ease, top 0.08s ease, background-color var(--theme-fade) ease;
   animation: blink var(--cursor-blink) steps(1) infinite;
   will-change: left, top;
 }
@@ -275,6 +298,22 @@ body {
   color: var(--accent);
 }
 
+/* "new best" badge — only shown when the score beats the stored best */
+.new-best {
+  display: none;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+
+.new-best.show {
+  display: block;
+  animation: fadeInUp var(--fade-in) ease both;
+}
+
 /* =========================================================================
    Bottom bar — restart + hint
    ========================================================================= */
@@ -318,6 +357,118 @@ body {
 }
 
 /* =========================================================================
+   Theme switcher — fixed bottom-right, opens a grid of palette swatches
+   ========================================================================= */
+.theme-picker {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 50;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  color: var(--fg);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.theme-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: background-color var(--theme-fade) ease;
+}
+
+.theme-menu {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 0.2rem;
+  padding: 0.5rem;
+  background: var(--panel);
+  border-radius: 12px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+  animation: menuPop 0.14s ease;
+}
+
+.theme-menu[hidden] {
+  display: none;
+}
+
+@keyframes menuPop {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+.theme-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.theme-item:hover {
+  color: var(--fg);
+  background: var(--accent-soft);
+}
+
+.theme-item.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Mini preview: the palette's bg with accent + fg dots inside */
+.theme-swatch {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 34px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.theme-dot-sm {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.theme-name {
+  white-space: nowrap;
+}
+
+/* =========================================================================
    Mobile
    ========================================================================= */
 @media (max-width: 600px) {
@@ -339,5 +490,16 @@ body {
 
   .results-grid {
     gap: 1.2rem 2rem;
+  }
+
+  .theme-picker {
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+
+  /* Keep the popup on-screen on narrow viewports */
+  .theme-menu {
+    max-width: calc(100vw - 1.5rem);
+    overflow: auto;
   }
 }

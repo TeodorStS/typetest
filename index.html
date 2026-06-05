@@ -18,19 +18,22 @@
 <body>
   <!-- App shell -->
   <main class="app">
-    <!-- Top bar: timer mode selector + live stats -->
+    <!-- Top bar: mode selector + live stats -->
     <header class="topbar">
-      <!-- Timer mode selector -->
-      <nav class="modes" id="modes" aria-label="Timer duration">
-        <button class="mode" data-time="15">15</button>
-        <button class="mode" data-time="30">30</button>
-        <button class="mode" data-time="60">60</button>
-        <button class="mode" data-time="120">120</button>
+      <!-- Mode selector: type (time/words) + amount -->
+      <nav class="modes" id="modes" aria-label="Test mode">
+        <div class="mode-group" id="typeGroup" role="group" aria-label="Mode type">
+          <button class="mode" type="button" data-type="time">time</button>
+          <button class="mode" type="button" data-type="words">words</button>
+        </div>
+        <span class="mode-divider" aria-hidden="true"></span>
+        <!-- Amount buttons injected by JS based on the active type -->
+        <div class="mode-group" id="amountGroup" role="group" aria-label="Amount"></div>
       </nav>
 
       <!-- Live readouts (revealed once typing starts) -->
       <div class="live" id="live">
-        <span class="live-timer" id="liveTimer">15</span>
+        <span class="live-timer" id="liveTimer">30</span>
         <span class="live-sep">·</span>
         <span class="live-wpm" id="liveWpm">0</span><span class="live-unit">wpm</span>
         <span class="live-sep">·</span>
@@ -58,6 +61,7 @@
 
     <!-- Results screen (revealed on finish) -->
     <section class="results" id="results" aria-hidden="true">
+      <div class="new-best" id="newBest">★ new best</div>
       <div class="results-grid">
         <div class="stat stat--hero">
           <span class="stat-value" id="resWpm">0</span>
@@ -75,6 +79,14 @@
           <span class="stat-value" id="resErrors">0</span>
           <span class="stat-label">errors</span>
         </div>
+        <div class="stat">
+          <span class="stat-value" id="resBest">0</span>
+          <span class="stat-label">best wpm</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="resTime">0s</span>
+          <span class="stat-label">time</span>
+        </div>
       </div>
     </section>
 
@@ -84,6 +96,23 @@
       <p class="hint"><kbd>tab</kbd> / <kbd>esc</kbd> — restart</p>
     </footer>
   </main>
+
+  <!-- In-app theme switcher (fixed bottom-right) -->
+  <div class="theme-picker" id="themePicker">
+    <button
+      class="theme-toggle"
+      id="themeToggle"
+      type="button"
+      aria-haspopup="true"
+      aria-expanded="false"
+      title="Change theme"
+    >
+      <span class="theme-dot" id="themeDot"></span>
+      <span>theme</span>
+    </button>
+    <!-- Menu items injected by JS -->
+    <div class="theme-menu" id="themeMenu" role="menu" hidden></div>
+  </div>
 
   <script src="script.js"></script>
 </body>
