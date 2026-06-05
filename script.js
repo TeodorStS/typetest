@@ -226,7 +226,7 @@ function beginTest() {
 
 /** Re-evaluate and repaint the current word's character states. */
 function paintWord(wordIndex) {
-  const wordEl = els.words.children[wordIndex];
+  const wordEl = inner.children[wordIndex];
   const target = state.words[wordIndex];
   const typed = state.typed[wordIndex] || [];
 
