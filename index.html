@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>typetest — minimal typing test</title>
+
+  <!-- JetBrains Mono from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- App shell -->
+  <main class="app">
+    <!-- Top bar: timer mode selector + live stats -->
+    <header class="topbar">
+      <!-- Timer mode selector -->
+      <nav class="modes" id="modes" aria-label="Timer duration">
+        <button class="mode" data-time="15">15</button>
+        <button class="mode" data-time="30">30</button>
+        <button class="mode" data-time="60">60</button>
+        <button class="mode" data-time="120">120</button>
+      </nav>
+
+      <!-- Live readouts (revealed once typing starts) -->
+      <div class="live" id="live">
+        <span class="live-timer" id="liveTimer">15</span>
+        <span class="live-sep">·</span>
+        <span class="live-wpm" id="liveWpm">0</span><span class="live-unit">wpm</span>
+        <span class="live-sep">·</span>
+        <span class="live-acc" id="liveAcc">100</span><span class="live-unit">%</span>
+      </div>
+    </header>
+
+    <!-- Typing area -->
+    <section class="test" id="test">
+      <!-- Words render here as spans of per-character spans -->
+      <div class="words" id="words" role="textbox" aria-label="Typing test" tabindex="0"></div>
+
+      <!-- Hidden input captures keystrokes so mobile keyboards open -->
+      <input
+        id="capture"
+        class="capture"
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-hidden="true"
+      />
+    </section>
+
+    <!-- Results screen (revealed on finish) -->
+    <section class="results" id="results" aria-hidden="true">
+      <div class="results-grid">
+        <div class="stat stat--hero">
+          <span class="stat-value" id="resWpm">0</span>
+          <span class="stat-label">wpm</span>
+        </div>
+        <div class="stat stat--hero">
+          <span class="stat-value" id="resAcc">0%</span>
+          <span class="stat-label">accuracy</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="resCorrect">0</span>
+          <span class="stat-label">correct words</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="resErrors">0</span>
+          <span class="stat-label">errors</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Restart control -->
+    <footer class="bottombar">
+      <button class="restart" id="restart" title="Restart (Tab or Esc)">restart</button>
+      <p class="hint"><kbd>tab</kbd> / <kbd>esc</kbd> — restart</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

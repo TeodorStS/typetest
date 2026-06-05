@@ -1,0 +1,336 @@
+/* =========================================================================
+   typetest — dark, minimal, terminal-inspired typing test
+   All theming lives in :root custom properties so it's easy to reskin.
+   ========================================================================= */
+
+:root {
+  /* ---- Colors ---- */
+  --bg:            #0e0e0f;   /* page background */
+  --fg:           #d4d4d6;   /* default text (typed-correct) */
+  --dim:          #555558;   /* pending / untyped characters */
+  --error:        #e0533d;   /* incorrect characters */
+  --error-bg:     rgba(224, 83, 61, 0.12);
+  --accent:       #e2b341;   /* golden/amber: cursor, timer, highlights */
+  --accent-soft:  rgba(226, 179, 65, 0.15);
+  --muted:        #6b6b70;   /* labels, hints */
+
+  /* ---- Typography ---- */
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-size-type: clamp(1.25rem, 2.4vw, 1.7rem);
+  --line-height-type: 1.9;
+
+  /* ---- Motion ---- */
+  --cursor-blink: 1s;
+  --fade-in: 0.5s;
+}
+
+/* ---- Reset-ish ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+/* ---- App shell ---- */
+.app {
+  width: 100%;
+  max-width: 850px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =========================================================================
+   Top bar — mode selector + live stats
+   ========================================================================= */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  min-height: 1.8rem;
+}
+
+.modes {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.mode {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.mode:hover {
+  color: var(--fg);
+}
+
+.mode.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Live readouts — hidden until typing begins (toggled via .visible) */
+.live {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: var(--accent);
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.live.visible {
+  opacity: 1;
+}
+
+.live-timer {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.live-sep {
+  color: var(--muted);
+}
+
+.live-unit {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-left: 0.1rem;
+}
+
+/* =========================================================================
+   Typing area
+   ========================================================================= */
+.test {
+  position: relative;
+}
+
+.words {
+  position: relative;
+  font-size: var(--font-size-type);
+  line-height: var(--line-height-type);
+  color: var(--dim);
+  letter-spacing: 0.5px;
+  /* Show ~3 lines, hide the rest as the user scrolls down */
+  max-height: calc(var(--font-size-type) * var(--line-height-type) * 3);
+  overflow: hidden;
+  user-select: none;
+  outline: none;
+}
+
+/* Each word is an inline-block so it wraps cleanly and never breaks mid-word */
+.word {
+  display: inline-block;
+  margin-right: 0.6em;
+}
+
+/* Per-character states */
+.char {
+  position: relative;
+  transition: color 0.05s ease;
+}
+
+.char.correct {
+  color: var(--fg);
+}
+
+.char.incorrect {
+  color: var(--error);
+  background: var(--error-bg);
+  border-radius: 2px;
+}
+
+/* Extra characters the user typed beyond the word's length */
+.char.extra {
+  color: var(--error);
+  opacity: 0.6;
+}
+
+/* =========================================================================
+   Animated cursor — a floating bar positioned by JS
+   ========================================================================= */
+.cursor {
+  position: absolute;
+  width: 2px;
+  height: calc(var(--font-size-type) * 1.25);
+  background: var(--accent);
+  border-radius: 2px;
+  top: 0;
+  left: 0;
+  /* Smoothly glide between characters */
+  transition: left 0.08s ease, top 0.08s ease;
+  animation: blink var(--cursor-blink) steps(1) infinite;
+  will-change: left, top;
+}
+
+/* Stop blinking while actively moving (class toggled by JS) */
+.cursor.typing {
+  animation: none;
+}
+
+@keyframes blink {
+  0%, 50%   { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* Hidden input that captures real keystrokes (kept off-screen) */
+.capture {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* =========================================================================
+   Results screen
+   ========================================================================= */
+.results {
+  display: none;
+}
+
+.results.visible {
+  display: block;
+  animation: fadeInUp var(--fade-in) ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 1.5rem 3rem;
+  justify-content: start;
+  align-items: end;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* Hero stats (WPM + accuracy) use the accent color and are larger */
+.stat--hero .stat-value {
+  font-size: 3.5rem;
+  color: var(--accent);
+}
+
+/* =========================================================================
+   Bottom bar — restart + hint
+   ========================================================================= */
+.bottombar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.restart {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.restart:hover,
+.restart:focus-visible {
+  color: var(--accent);
+  background: var(--accent-soft);
+  outline: none;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.hint kbd {
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* =========================================================================
+   Mobile
+   ========================================================================= */
+@media (max-width: 600px) {
+  :root {
+    --font-size-type: 1.2rem;
+  }
+
+  .app {
+    gap: 1.5rem;
+  }
+
+  .topbar {
+    justify-content: center;
+  }
+
+  .stat--hero .stat-value {
+    font-size: 2.6rem;
+  }
+
+  .results-grid {
+    gap: 1.2rem 2rem;
+  }
+}
