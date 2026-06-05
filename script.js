@@ -79,6 +79,14 @@ const PALETTES = {
   synthwave:    { label: 'synthwave',   bg: '#1a1033', fg: '#f5e6ff', dim: '#463a6b', error: '#ff5c8a', accent: '#ff2e97', muted: '#7a6ba8' },
   coral:        { label: 'coral',       bg: '#2b1e2e', fg: '#ffe8df', dim: '#5a4150', error: '#ff5a5a', accent: '#ff7e5f', muted: '#9a7488' },
   coffee:       { label: 'coffee',      bg: '#211710', fg: '#ece0d1', dim: '#4f3d2e', error: '#e07a5f', accent: '#c8956c', muted: '#8a7058' },
+
+  /* ---- Premium keycap (GMK) inspired ---- */
+  wob:          { label: 'white on black', bg: '#0a0a0a', fg: '#ffffff', dim: '#3d3d3d', error: '#e0564a', accent: '#f2f2f2', muted: '#707070' },
+  bow:          { label: 'black on white', bg: '#fafafa', fg: '#141414', dim: '#c4c4c4', error: '#d33a2c', accent: '#1a1a1a', muted: '#8a8a8a' },
+  'red-samurai':{ label: 'red samurai',    bg: '#16161c', fg: '#e9e9ee', dim: '#3a3a44', error: '#ff6b5b', accent: '#e63946', muted: '#3aa6a0' },
+  laser:        { label: 'laser',          bg: '#1a0b38', fg: '#ede4ff', dim: '#4a2f7a', error: '#ff5ca8', accent: '#2bd9ff', muted: '#8a5fd6' },
+  mizu:         { label: 'mizu',           bg: '#dfeef2', fg: '#2d4a55', dim: '#aecdd6', error: '#d65a5a', accent: '#2f93b0', muted: '#6e93a0' },
+  'modern-dolch':{label: 'modern dolch',   bg: '#2b2e33', fg: '#d6d9d2', dim: '#4a4e54', error: '#e07a5f', accent: '#5fb3a1', muted: '#7e837d' },
 };
 const THEME_ORDER = [
   'amber', 'dracula', 'nord', 'gruvbox', 'catppuccin',
@@ -86,6 +94,7 @@ const THEME_ORDER = [
   'mint', 'choc-mint', 'claude', 'watermelon', 'carbon',
   'matrix', 'olivia', 'iceberg', 'nautilus', 'botanical',
   'lavender', 'synthwave', 'coral', 'coffee',
+  'wob', 'bow', 'red-samurai', 'laser', 'mizu', 'modern-dolch',
 ];
 
 /* localStorage keys */

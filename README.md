@@ -14,7 +14,7 @@ A minimal, terminal-inspired typing test (monkeytype-style). No frameworks, no b
 - Live WPM and accuracy while typing
 - Results screen with WPM, accuracy, correct words, errors, time, and your best WPM (with a "new best" badge)
 - Best scores saved per mode in `localStorage`
-- In-app theme switcher with 24 palettes — your choice is remembered. Includes dev favorites (dracula, nord, gruvbox, catppuccin, tokyo night, solarized, rosé pine, everforest), monkeytype-inspired ones (carbon, matrix, olivia, iceberg, nautilus), light themes (latte, botanical, lavender), and more (mint, choc mint, claude, watermelon, synthwave, coral, coffee, amber)
+- In-app theme switcher with 30 palettes — your choice is remembered. Includes dev favorites (dracula, nord, gruvbox, catppuccin, tokyo night, solarized, rosé pine, everforest), monkeytype-inspired ones (carbon, matrix, olivia, iceberg, nautilus), premium-keycap-inspired ones (white on black, black on white, red samurai, laser, mizu, modern dolch), light themes (latte, botanical, lavender), and more (mint, choc mint, claude, watermelon, synthwave, coral, coffee, amber)
 - Restart with `Esc`, `Tab`, or the button; `Enter` ends a test early (and is how you finish infinite mode)
 
 ## Run it
