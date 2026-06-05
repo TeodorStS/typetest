@@ -25,6 +25,9 @@
         <div class="mode-group" id="typeGroup" role="group" aria-label="Mode type">
           <button class="mode" type="button" data-type="time">time</button>
           <button class="mode" type="button" data-type="words">words</button>
+          <button class="mode mode-inf" type="button" data-type="infinite"
+                  title="infinite — no limit, press Enter to finish"
+                  aria-label="infinite mode">∞</button>
         </div>
         <span class="mode-divider" aria-hidden="true"></span>
         <!-- Amount buttons injected by JS based on the active type -->
@@ -93,7 +96,7 @@
     <!-- Restart control -->
     <footer class="bottombar">
       <button class="restart" id="restart" title="Restart (Tab or Esc)">restart</button>
-      <p class="hint"><kbd>tab</kbd> / <kbd>esc</kbd> — restart</p>
+      <p class="hint"><kbd>tab</kbd> / <kbd>esc</kbd> — restart · <kbd>enter</kbd> — finish</p>
     </footer>
   </main>
 

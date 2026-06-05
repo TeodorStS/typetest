@@ -90,7 +90,10 @@ const THEME_ORDER = [
 
 /* localStorage keys */
 const LS_THEME = 'typetest-theme';
-const bestKey = () => `typetest-best-${state.mode}-${state.amount}`;
+const bestKey = () =>
+  state.mode === 'infinite'
+    ? 'typetest-best-infinite'
+    : `typetest-best-${state.mode}-${state.amount}`;
 
 /* ---- DOM references ---- */
 const els = {
@@ -340,6 +343,12 @@ function startClock() {
   tick();
 }
 
+/** Format a number of seconds as m:ss (for infinite mode's count-up clock). */
+function formatTime(totalSec) {
+  const s = Math.floor(totalSec);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
 /** Per-tick update of the clock display + live stats; ends the test when due. */
 function tick() {
   if (state.finished) return;
@@ -347,8 +356,10 @@ function tick() {
     const remaining = state.amount - elapsedSeconds();
     els.liveTimer.textContent = Math.max(0, Math.ceil(remaining));
     if (remaining <= 0) { finish(); return; }
-  } else {
+  } else if (state.mode === 'words') {
     els.liveTimer.textContent = `${Math.min(state.wordIndex, state.amount)}/${state.amount}`;
+  } else { // infinite — count up, never auto-finishes
+    els.liveTimer.textContent = formatTime(elapsedSeconds());
   }
   updateLiveStats();
 }
@@ -602,7 +613,8 @@ function restart() {
   els.results.setAttribute('aria-hidden', 'true');
   els.newBest.classList.remove('show');
   els.live.classList.remove('visible');
-  els.liveTimer.textContent = mode === 'time' ? amount : `0/${amount}`;
+  els.liveTimer.textContent =
+    mode === 'time' ? amount : mode === 'words' ? `0/${amount}` : '0:00';
   els.liveWpm.textContent = '0';
   els.liveAcc.textContent = '100';
 
@@ -616,27 +628,33 @@ function restart() {
 
 /** Render the amount buttons for the current mode + reflect active states. */
 function buildAmountButtons() {
+  const isInfinite = state.mode === 'infinite';
   els.amountGroup.innerHTML = '';
-  AMOUNTS[state.mode].forEach((n) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'mode';
-    btn.dataset.amount = n;
-    btn.textContent = n;
-    btn.classList.toggle('active', n === state.amount);
-    els.amountGroup.appendChild(btn);
-  });
+  // Infinite has no amount — hide the divider + amount group via this class
+  els.modes.classList.toggle('mode-no-amount', isInfinite);
+
+  if (!isInfinite) {
+    AMOUNTS[state.mode].forEach((n) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mode';
+      btn.dataset.amount = n;
+      btn.textContent = n;
+      btn.classList.toggle('active', n === state.amount);
+      els.amountGroup.appendChild(btn);
+    });
+  }
   [...els.typeGroup.children].forEach((b) =>
     b.classList.toggle('active', b.dataset.type === state.mode)
   );
 }
 
-/** Switch between 'time' and 'words' modes. */
+/** Switch between 'time', 'words', and 'infinite' modes. */
 function setMode(mode) {
   if (mode === state.mode) return;
   state.mode = mode;
   // Keep a sensible amount if the current one isn't valid for the new mode
-  if (!AMOUNTS[mode].includes(state.amount)) {
+  if (mode !== 'infinite' && !AMOUNTS[mode].includes(state.amount)) {
     state.amount = mode === 'time' ? 30 : 25;
   }
   buildAmountButtons();
@@ -711,6 +729,14 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Tab' || e.key === 'Escape') {
     e.preventDefault();
     restart();
+    els.capture.focus();
+    return;
+  }
+
+  // Enter ends the current test early (the only way to finish in infinite mode)
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (state.started && !state.finished) finish();
     els.capture.focus();
     return;
   }

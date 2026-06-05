@@ -7,14 +7,15 @@ A minimal, terminal-inspired typing test (monkeytype-style). No frameworks, no b
 - ~350 common English words, randomly streamed
 - Character-by-character highlighting: correct, incorrect, and pending
 - Animated cursor that follows your position
-- Two modes:
+- Three modes:
   - **Time** — 15s, 30s, 60s, 120s
   - **Words** — 10, 25, 50, 100 words
+  - **Infinite** (∞) — no limit; a count-up clock runs and you press `Enter` to finish
 - Live WPM and accuracy while typing
 - Results screen with WPM, accuracy, correct words, errors, time, and your best WPM (with a "new best" badge)
 - Best scores saved per mode in `localStorage`
 - In-app theme switcher with 24 palettes — your choice is remembered. Includes dev favorites (dracula, nord, gruvbox, catppuccin, tokyo night, solarized, rosé pine, everforest), monkeytype-inspired ones (carbon, matrix, olivia, iceberg, nautilus), light themes (latte, botanical, lavender), and more (mint, choc mint, claude, watermelon, synthwave, coral, coffee, amber)
-- Restart with `Esc`, `Tab`, or the button
+- Restart with `Esc`, `Tab`, or the button; `Enter` ends a test early (and is how you finish infinite mode)
 
 ## Run it
 

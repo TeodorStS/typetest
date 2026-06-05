@@ -98,6 +98,18 @@ body {
   margin: 0 0.3rem;
 }
 
+/* The infinite (∞) glyph reads better a touch larger */
+.mode-inf {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* Infinite mode has no amount — hide the divider and amount buttons */
+.modes.mode-no-amount .mode-divider,
+.modes.mode-no-amount #amountGroup {
+  display: none;
+}
+
 .mode {
   background: none;
   border: none;
